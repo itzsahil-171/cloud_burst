@@ -9,6 +9,7 @@ import { ChartsComponent } from "@/components/charts-component"
 import { RiskAssessment } from "@/components/risk-assessment"
 import { ApiKeyConfig } from "@/components/api-key-config"
 import { ForecastSection } from "@/components/forecast-section"
+import { AIInsights } from "@/components/ai-insights"
 import { Toaster } from "@/components/ui/toaster"
 import { useWeatherStore } from "@/lib/store/weather-store"
 import { useToast } from "@/hooks/use-toast"
@@ -101,6 +102,11 @@ export default function Home() {
           {/* Risk Assessment */}
           <div className="mb-12">
             <RiskAssessment />
+          </div>
+
+          {/* AI Insights */}
+          <div className="mb-12">
+            <AIInsights />
           </div>
         </div>
       </section>

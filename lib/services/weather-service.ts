@@ -20,6 +20,149 @@ const INDIAN_CITIES: Record<string, Location> = {
 const CACHE_TIMEOUT = 5 * 60 * 1000 // 5 minutes
 const cache = new Map<string, { data: CacheData; timestamp: number }>()
 
+export class AIService {
+  private readonly API_URL = 'https://api.groq.com/openai/v1/chat/completions'
+  private readonly MODEL = 'openai/gpt-oss-20b'
+  private apiKey: string | null = null
+
+  constructor() {
+    if (typeof window !== 'undefined') {
+      this.apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY || null
+    }
+  }
+
+  async getCloudBurstInsights(weatherData: any, location: string): Promise<string> {
+    if (!this.apiKey) {
+      return "AI insights unavailable - Groq API key not configured"
+    }
+
+    const systemPrompt = `You are a weather analysis expert specializing in cloud burst prediction and risk assessment. Analyze the following weather data and provide actionable insights about cloud burst risks, safety recommendations, and weather patterns. 
+
+IMPORTANT: Format your response using Markdown syntax. Use:
+- Headers (##, ###) for sections
+- Tables for structured data (use markdown table syntax)
+- Bullet points (-) or numbered lists for recommendations
+- **Bold** for emphasis on important terms
+- *Italic* for technical terms
+
+Weather Data:
+- Location: ${location}
+- Temperature: ${weatherData.main?.temp || 'N/A'}°C
+- Humidity: ${weatherData.main?.humidity || 'N/A'}%
+- Pressure: ${weatherData.main?.pressure || 'N/A'} hPa
+- Wind Speed: ${weatherData.wind?.speed ? weatherData.wind.speed * 3.6 : 'N/A'} km/h
+- Rainfall: ${weatherData.rainfall || 0} mm/h
+- Weather Condition: ${weatherData.weather?.[0]?.description || 'N/A'}
+
+Please provide in Markdown format:
+1. ## Current risk assessment
+2. ## Key weather patterns to watch (use a table if helpful)
+3. ## Safety recommendations
+4. ## Timeline for potential changes (use a table with columns: Time window, Expected changes, Actionable alert)`
+
+    try {
+      const response = await fetch(this.API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.apiKey}`,
+        },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: "system",
+              content: systemPrompt
+            },
+            {
+              role: "user",
+              content: "Please analyze this weather data for cloud burst risks and provide insights."
+            }
+          ],
+          model: this.MODEL,
+          temperature: 0.7,
+          max_completion_tokens: 2048,
+          top_p: 1,
+          stream: false,
+          reasoning_effort: "medium"
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error(`AI API error: ${response.status}`)
+      }
+
+      const data = await response.json()
+      return data.choices?.[0]?.message?.content || "Unable to generate AI insights at this time."
+
+    } catch (error) {
+      console.error('AI service error:', error)
+      return "AI insights temporarily unavailable. Please check your connection and API key configuration."
+    }
+  }
+
+  async getWeatherTrends(forecastData: any[], location: string): Promise<string> {
+    if (!this.apiKey) {
+      return "AI trends analysis unavailable - Groq API key not configured"
+    }
+
+    const forecastSummary = forecastData.slice(0, 5).map((item, index) =>
+      `Day ${index + 1}: ${item.main?.temp}°C, ${item.rainfall || 0}mm rain, ${item.weather?.[0]?.description || 'N/A'}`
+    ).join('\n')
+
+    const systemPrompt = `You are a meteorological expert analyzing weather forecast data for cloud burst risk assessment. Provide a concise analysis of weather trends and potential cloud burst risks over the next 5 days.
+
+Forecast Data for ${location}:
+${forecastSummary}
+
+Focus on (format in Markdown):
+1. ## Weather pattern trends
+2. ## Risk pattern analysis (increasing/decreasing)
+3. ## Critical time periods to monitor
+4. ## Overall risk trajectory`
+
+    try {
+      const response = await fetch(this.API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.apiKey}`,
+        },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: "system",
+              content: systemPrompt
+            },
+            {
+              role: "user",
+              content: "Analyze these weather trends for cloud burst risk assessment."
+            }
+          ],
+          model: this.MODEL,
+          temperature: 0.6,
+          max_completion_tokens: 1024,
+          top_p: 1,
+          stream: false,
+          reasoning_effort: "medium"
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error(`AI API error: ${response.status}`)
+      }
+
+      const data = await response.json()
+      return data.choices?.[0]?.message?.content || "Unable to analyze weather trends at this time."
+
+    } catch (error) {
+      console.error('AI trends analysis error:', error)
+      return "Weather trend analysis temporarily unavailable."
+    }
+  }
+}
+
+export const aiService = new AIService()
+
 export class WeatherService {
   private apiKey: string | null = null
   private readonly BASE_URL = 'https://api.openweathermap.org/data/2.5'

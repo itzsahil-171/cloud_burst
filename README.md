@@ -7,9 +7,10 @@ Advanced cloud burst detection and early warning system built with Next.js 16, R
 - ✅ **Modern Tech Stack**: Next.js 16, React 19, TypeScript
 - ✅ **Beautiful UI**: Shadcn UI components with Tailwind CSS
 - ✅ **100% FREE APIs**: Open-Meteo (primary) + OpenWeatherMap (optional)
+- ✅ **AI-Powered Insights**: Groq AI integration for weather analysis
 - ✅ **Real-time Weather Data**: Live weather monitoring
 - ✅ **Cloud Burst Detection**: AI-powered risk assessment
-- ✅ **Interactive Maps**: Leaflet integration
+- ✅ **Weather Trend Analysis**: 5-day forecast pattern recognition
 - ✅ **Data Visualization**: Recharts for weather charts
 - ✅ **State Management**: Zustand for efficient state handling
 - ✅ **Responsive Design**: Mobile-first approach
@@ -41,7 +42,17 @@ Advanced cloud burst detection and early warning system built with Next.js 16, R
    pnpm dev
    ```
 
-4. **Open your browser:**
+4. **Environment Setup (Optional for AI Features):**
+   ```bash
+   # Create a .env.local file in the root directory
+   cp .env.local.example .env.local
+
+   # Add your Groq API key for AI insights
+   # Get your API key from: https://console.groq.com/
+   echo "NEXT_PUBLIC_GROQ_API_KEY=your_groq_api_key_here" >> .env.local
+   ```
+
+5. **Open your browser:**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## 🎨 Tech Stack
