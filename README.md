@@ -30,8 +30,6 @@ Advanced cloud burst detection and early warning system built with Next.js 16, R
    # or
    pnpm install
    ```
-   
-   **Note:** The project includes an `.npmrc` file that automatically uses `legacy-peer-deps` because `react-leaflet` currently requires React 18, but we're using React 19. This is safe and the app works perfectly.
 
 3. **Run the development server:**
    ```bash
@@ -64,8 +62,8 @@ Advanced cloud burst detection and early warning system built with Next.js 16, R
 - **UI Components**: Shadcn UI (Radix UI)
 - **State Management**: Zustand
 - **Charts**: Recharts
-- **Maps**: React Leaflet
 - **Icons**: Lucide React
+- **Markdown**: React Markdown
 
 ## 📁 Project Structure
 
@@ -131,13 +129,13 @@ This is a migration from vanilla JavaScript to Next.js. Current implementation i
 - ✅ Toast notifications
 - ✅ State management
 
-**Coming Soon:**
-- Interactive map component
-- Charts and graphs
-- SOS alert system
-- Forecast section
-- Education section
-- API key configuration UI
+**Features:**
+- ✅ Charts and graphs
+- ✅ SOS alert system
+- ✅ Forecast section
+- ✅ Education section
+- ✅ API key configuration UI
+- ✅ AI-powered insights with markdown rendering
 
 ## 📝 Scripts
 
